@@ -20,6 +20,7 @@ window.onload = function () {
   document.getElementById("coma").addEventListener("click", coma);
   document.getElementById("igual").addEventListener("click", igual);
   document.addEventListener("keydown", keyboard);
+ 
 
   function displayNumeros() {
     if (viene_de_op) {
@@ -47,10 +48,12 @@ window.onload = function () {
       multiplicar();
     } else if (tecla.key === "/") {
       dividir();
-    } else if (tecla.code === "Comma") {
+    } else if (tecla.code === "Comma" || tecla.code === "NumpadDecimal") {
       coma();
     } else if (
-      (tecla.key === "Dead" && tecla.code === "BracketLeft")||tecla.key === "^") {
+      (tecla.key === "Dead" && tecla.code === "BracketLeft") ||
+      tecla.key === "^"
+    ) {
       cuadrado();
     } else if (tecla.key === "Enter" || tecla.key === "=") {
       igual();
@@ -58,23 +61,25 @@ window.onload = function () {
       borrar();
     }
   }
-  function solo_operacion() {
+  //Cuando el usuario pulsa un operador sin haber introducido ningún número antes.
+  function solo_operacion() { 
     if (display.value === "" || display.value === " ") {
       display.value = acumular;
       viene_de_op = false;
     }
   }
 
-function coma() {
-  if(display.value == "" || viene_de_op) {
-    display.value = "0.";
-    viene_de_op = false;
-  } else if (!display.value.includes(".")) {
-    display.value += ".";
+  function coma() {
+    if (display.value == "" || viene_de_op) {
+      display.value = "0.";
+      viene_de_op = false;
+    } else if (!display.value.includes(".")) {
+      display.value += ".";
+    }
   }
-}
 
   function operadores() {
+    if (viene_de_op) return;
     switch (ultima_operacion) {
       case "+":
         acumular += parseFloat(display.value);
@@ -125,20 +130,23 @@ function coma() {
   }
 
   function cuadrado() {
-    solo_operacion()
-    acumular = Math.pow(parseFloat(display.value), 2);
-    display.value = acumular;
-    viene_de_op = true;
+    if (display.value.length === 0) {
+      return;
+    }
+    let aux = Math.pow(parseFloat(display.value), 2);
+    display.value = aux;
   }
   function raiz() {
-    solo_operacion()
-    acumular = Math.sqrt(parseFloat(display.value));
-    display.value = acumular;
-    viene_de_op = true;
+    if (display.value.length === 0) {
+      return;
+    }
+    let aux = Math.sqrt(parseFloat(display.value));
+    display.value = aux;
   }
   function borrar() {
     acumular = 0;
     display.value = "";
+    ultima_operacion = " ";
   }
 
   function igual() {
@@ -160,5 +168,7 @@ function coma() {
     }
 
     display.value = acumular;
+    ultima_operacion = " ";
+    viene_de_op = true;
   }
 };
